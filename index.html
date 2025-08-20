@@ -123,6 +123,18 @@
 }
 .toast.show{opacity:1; transform:translateY(0)}
 
+sendToSheet(ticket).then(ok => {
+  if (ok) {
+    console.log('Enviado a Sheets');
+    toast('✅ Enviado a la base central', true);
+  } else {
+    console.warn('No se pudo enviar a Sheets. Queda en localStorage');
+    toast('⚠️ No se pudo enviar a Sheets. Guardado local', false);
+  }
+});
+
+
+	  
   </style>
 </head>
 <body class="light">
@@ -572,3 +584,4 @@
   </script>
 </body>
 </html>
+
