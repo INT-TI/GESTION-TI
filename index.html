@@ -434,8 +434,21 @@
         fecha: new Date().toISOString(),
         adjunto: base ? { name: file.name, type: file.type, dataUrl: base, size: file.size } : null
       };
-      upsert(ticket);
-      form.reset();
+     // Guarda local para no perder datos si falla la red
+upsert(ticket);
+
+// Intenta enviar a Google Sheets
+sendToSheet(ticket).then(ok => {
+  if (ok) {
+    console.log('Enviado a Sheets');
+  } else {
+    console.warn('No se pudo enviar a Sheets. Queda en localStorage');
+    // toast('No se pudo enviar a la base central. Se guardó en este navegador.');
+  }
+});
+
+form.reset();
+
     });
 
     // File -> dataURL (si hay archivo)
@@ -550,6 +563,11 @@
       save(tickets); render();
     });
 
+// === Conexion con Google Apps Script ===
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwG_Vn0ZB327IHGOVW8gEeW7TwNePCqJ__MWYBhqfXWMI9K-udw5I2h8rPX7J-4Cti6/exec';   // <- cambia esto
+const API_KEY = '010186'; // <- cambia esto
+
+	  
     // Tema
     toggleTheme.addEventListener('click', ()=>{
       const cur = document.body.classList.contains('dark') ? 'dark' : 'light';
@@ -563,3 +581,4 @@
   </script>
 </body>
 </html>
+
