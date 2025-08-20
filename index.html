@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GESTIÓN TI — REPORTE DE FALLAS</title>
+  <title>Gestión TI — Reporte de Fallas</title>
   <meta name="description" content="App simple en HTML/CSS/JS para reportar fallas e incidentes. Guarda en localStorage, permite filtrar, buscar, cambiar estado y exportar a CSV." />
   <style>
     :root{
@@ -113,6 +113,16 @@
     .modal-body{padding:14px}
     .thumb{max-width: 100%; border-radius:12px; border:1px solid var(--border)}
     .muted{color: var(--muted)}
+	  /* Toast simple */
+.toast{
+  position:fixed; right:16px; bottom:16px; z-index:1000;
+  background:var(--card); color:var(--text);
+  border:1px solid var(--border); border-radius:12px;
+  padding:10px 12px; box-shadow:var(--shadow);
+  opacity:0; transform:translateY(8px); transition:.25s;
+}
+.toast.show{opacity:1; transform:translateY(0)}
+
   </style>
 </head>
 <body class="light">
@@ -120,7 +130,7 @@
     <div class="nav">
       <div class="brand">
         <div class="logo" aria-hidden="true"></div>
-        <div>Gestión TI · <span class="muted">REPORTE DE FALLAS</span></div>
+        <div>Gestión TI · <span class="muted">Reporte de Fallas</span></div>
       </div>
       <div class="spacer"></div>
       <button id="toggleTheme" class="btn ghost" title="Cambiar tema">🌗 Tema</button>
@@ -130,7 +140,7 @@
   <main>
     <!-- Columna izquierda: Formulario -->
     <section class="card">
-      <h2>REPORTE USUARIO</h2>
+      <h2>Nuevo reporte</h2>
       <div class="body">
         <form id="formTicket" novalidate>
           <div class="grid">
@@ -147,7 +157,6 @@
                 <option>Software</option>
                 <option>Correo</option>
                 <option>Impresión</option>
-		    <option>Mantenimiento</option>
                 <option>Otro</option>
               </select>
             </div>
@@ -188,7 +197,7 @@
 
     <!-- Columna derecha: Dashboard -->
     <section class="card">
-      <h2>ESTADO DE REPORTE</h2>
+      <h2>Panel</h2>
       <div class="body">
         <div class="kpis">
           <div class="kpi"><div class="label">Total</div><div class="val" id="kpiTotal">0</div></div>
@@ -434,21 +443,8 @@
         fecha: new Date().toISOString(),
         adjunto: base ? { name: file.name, type: file.type, dataUrl: base, size: file.size } : null
       };
-     // Guarda local para no perder datos si falla la red
-upsert(ticket);
-
-// Intenta enviar a Google Sheets
-sendToSheet(ticket).then(ok => {
-  if (ok) {
-    console.log('Enviado a Sheets');
-  } else {
-    console.warn('No se pudo enviar a Sheets. Queda en localStorage');
-    // toast('No se pudo enviar a la base central. Se guardó en este navegador.');
-  }
-});
-
-form.reset();
-
+      upsert(ticket);
+      form.reset();
     });
 
     // File -> dataURL (si hay archivo)
@@ -563,11 +559,6 @@ form.reset();
       save(tickets); render();
     });
 
-// === Conexion con Google Apps Script ===
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwG_Vn0ZB327IHGOVW8gEeW7TwNePCqJ__MWYBhqfXWMI9K-udw5I2h8rPX7J-4Cti6/exec';   // <- cambia esto
-const API_KEY = '010186'; // <- cambia esto
-
-	  
     // Tema
     toggleTheme.addEventListener('click', ()=>{
       const cur = document.body.classList.contains('dark') ? 'dark' : 'light';
@@ -581,4 +572,3 @@ const API_KEY = '010186'; // <- cambia esto
   </script>
 </body>
 </html>
-
